@@ -1,3 +1,4 @@
+from __future__ import print_function
 import numpy as np
 
 from utils import timeout, count_nonzero_unique
@@ -158,7 +159,7 @@ if __name__ == "__main__":
          [0, 0, 0, 0, 8, 0, 0, 7, 9]])
     s = SudokuSolver(grid=grid)
     s.solve()
-    print s.possibility_map()
-    print s.solutions
-    print s.solutions_depth
-    #  print s.neighbor_list.shape
+    print(s.possibility_map())
+    print(s.solutions)
+    print(s.solutions_depth)
+    #  print(s.neighbor_list.shape)

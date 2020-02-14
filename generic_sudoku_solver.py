@@ -1,3 +1,4 @@
+from __future__ import print_function
 import numpy as np
 
 from utils import timeout, count_nonzero_unique
@@ -130,16 +131,16 @@ if __name__ == "__main__":
          [0, 0, 0, 4, 1, 9, 0, 0, 5],
          [0, 0, 0, 0, 8, 0, 0, 7, 9]])
     gs = GenericSudokuSolver(grid=grid)
-    print GenericSudokuSolver.is_valid(grid, dim=3, rank=2)
-    print gs.dim
-    print gs.rank
-    print gs.nnumbers
-    print gs.grid
-    print gs.possibilities((4, 4))
-    print gs.possibility_map()
+    print(GenericSudokuSolver.is_valid(grid, dim=3, rank=2))
+    print(gs.dim)
+    print(gs.rank)
+    print(gs.nnumbers)
+    print(gs.grid)
+    print(gs.possibilities((4, 4)))
+    print(gs.possibility_map())
     gs.solve()
-    print gs.solutions
-    print gs.solutions_depth
-    print gs.grid_is_valid
-    print gs.grid_is_solvable
-    print gs.grid_is_solution_unique
+    print(gs.solutions)
+    print(gs.solutions_depth)
+    print(gs.grid_is_valid)
+    print(gs.grid_is_solvable)
+    print(gs.grid_is_solution_unique)

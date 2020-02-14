@@ -1,3 +1,4 @@
+from __future__ import print_function
 import numpy as np
 
 
@@ -79,4 +80,4 @@ if __name__ == "__main__":
     _check_sudoku_neighbor_list()
 
     nl = get_sudoku_neighbor_list(dim=2, rank=3)
-    print nl[0, 0, 0]
+    print(nl[0, 0, 0])
