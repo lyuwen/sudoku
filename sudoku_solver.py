@@ -6,21 +6,8 @@ class SudokuSolver(object):
     """
     
     
-    def __init__(self, grid, nsolutions=None):
+    def __init__(self, grid):
         self.grid = np.array(grid)
-        self.nsolutions = nsolutions
-
-
-    def possible_f(self, x, y, num):
-        if (self.grid[x, :] == num).any():
-            return False
-        if (self.grid[:, y] == num).any():
-            return False
-        x0 = (x // 3) * 3
-        y0 = (y // 3) * 3
-        if (self.grid[x0:x0 + 3, y0:y0 + 3] == num).any():
-            return False
-        return True
 
 
     def possible(self, x, y, num):
@@ -51,63 +38,54 @@ class SudokuSolver(object):
         return sorted(possibilities)
     
     
-    def solve(self, method=2):
+    def solve(self, method=0):
+        """ Solve for all solutions for a given Sudoku grid
+        """
         self.solutions = []
         if method == 0:
-            self._solve_v1_a()
+            self._solve()
         elif method == 1:
-            self._solve_v1_b()
-        elif method == 2:
-            self._solve_v2()
+            self._solve_alt()
+        else:
+            raise ValueError("Invalid method number, expected to be either 0 or 1.")
 
     
-    def _solve_v1_a(self):
-        for i in range(9):
-            for j in range(9):
-                if self.grid[i, j] == 0:
-                    for n in range(1, 10):
-                        if self.possible_f(i, j, n):
-                            self.grid[i, j] = n
-                            self._solve_v1_a()
-                            self.grid[i, j] = 0
-                    return
-        self.solutions.append(self.grid.copy())
-
-        
-    def _solve_v1_b(self):
+    def _solve_alt(self):
         for i in range(9):
             for j in range(9):
                 if self.grid[i, j] == 0:
                     for n in range(1, 10):
                         if self.possible(i, j, n):
                             self.grid[i, j] = n
-                            self._solve_v1_b()
+                            self._solve_alt()
                             self.grid[i, j] = 0
                     return
         self.solutions.append(self.grid.copy())
 
 
-    def _solve_v2(self):
+    def _solve(self):
         for i in range(9):
             for j in range(9):
                 if self.grid[i, j] == 0:
                     for n in self.possibilities(i, j):
                         self.grid[i, j] = n
-                        self._solve_v2()
+                        self._solve()
                         self.grid[i, j] = 0
                     return
         self.solutions.append(self.grid.copy())
 
 
     def solven(self, nsolutions=None):
+        """ Solve for up to the first N solutions of a given Sudoku grid.
+        """
         self.solutions = []
         if nsolutions is not None:
-          self.nsolutions = nsolutions
+          self._nsolutions = nsolutions
         self._solven()
 
 
     def _solven(self):
-        if self.nsolutions is not None and len(self.solutions) >= self.nsolutions:
+        if self._nsolutions is not None and len(self.solutions) >= self._nsolutions:
             return
         for i in range(9):
             for j in range(9):
