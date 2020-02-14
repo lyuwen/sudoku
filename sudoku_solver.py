@@ -9,6 +9,10 @@ class SudokuSolver(object):
     """ Sudoku Solver
     """
 
+    nnumbers = 9
+    dim = 3
+    rank = 2
+
     def __init__(self, grid):
         self.grid = np.array(grid)
 
