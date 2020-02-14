@@ -64,14 +64,13 @@ class SudokuSolver(object):
 
 
     def _solve(self):
-        for i in range(9):
-            for j in range(9):
-                if self.grid[i, j] == 0:
-                    for n in self.possibilities(i, j):
-                        self.grid[i, j] = n
-                        self._solve()
-                        self.grid[i, j] = 0
-                    return
+        for i, j in zip(*self.grid.nonzero()):
+            if self.grid[i, j] == 0:
+                for n in self.possibilities(i, j):
+                    self.grid[i, j] = n
+                    self._solve()
+                    self.grid[i, j] = 0
+                return
         self.solutions.append(self.grid.copy())
 
 
