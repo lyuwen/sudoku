@@ -1,12 +1,7 @@
 import numpy as np
 
-from utils import timeout
+from utils import timeout, count_nonzero_unique
 from constants import sudoku_neighbor_list
-
-
-def count_nonzero_unique(arr):
-    unique, counts = np.unique(arr, return_counts=True)
-    return counts[unique.nonzero()]
 
 
 class SudokuSolver(object):

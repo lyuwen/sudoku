@@ -1,4 +1,5 @@
 import signal
+import numpy as np
 from contextlib import contextmanager
 
 
@@ -25,3 +26,8 @@ class TimeoutError(RuntimeError):
 
 def raise_timeout(signum, frame):
     raise TimeoutError
+
+
+def count_nonzero_unique(arr):
+    unique, counts = np.unique(arr, return_counts=True)
+    return counts[unique.nonzero()]
