@@ -1,6 +1,6 @@
 import numpy as np
 
-from utils import timeout
+from utils import timeout, count_nonzero_unique
 from constants import get_sudoku_neighbor_list
 
 
@@ -75,6 +75,48 @@ class GenericSudokuSolver(object):
         self.solutions.append(self.grid.copy())
         self.solutions_depth.append(depth)
 
+    @staticmethod
+    def is_valid(grid, dim, rank):
+        nnumbers = dim ** rank
+        grid = np.array(grid)
+        for j in range(rank):
+          for i in range(nnumbers):
+            slices = tuple([slice(None)] * j + [i] +
+                           [slice(None)] * (rank - j - 1))
+            counts = count_nonzero_unique(grid[slices])
+            if (counts > 1).any():
+                return False
+        for major_index in np.ndindex((dim, ) * rank):
+          slices = tuple([slice(i * 3, i * 3 + 3) for i in major_index])
+          counts = count_nonzero_unique(grid[slices].flatten())
+          if (counts > 1).any():
+              return False
+        return True
+
+    @property
+    def grid_is_valid(self):
+        return self.is_valid(self.grid, dim=self.dim, rank=self.rank)
+
+    @property
+    def grid_is_solvable(self):
+        if not self.grid_is_valid:
+          return False
+        is_solvable = False
+        with timeout(1):
+            self.solve(1)
+            is_solvable = True
+        return is_solvable
+
+    @property
+    def grid_is_solution_unique(self):
+        if not self.grid_is_valid:
+          return False
+        is_solvable = False
+        with timeout(1):
+            self.solve(2)
+            is_solvable = True
+        return len(self.solutions) == 1
+
 
 if __name__ == "__main__":
     grid = np.array(
@@ -88,6 +130,7 @@ if __name__ == "__main__":
          [0, 0, 0, 4, 1, 9, 0, 0, 5],
          [0, 0, 0, 0, 8, 0, 0, 7, 9]])
     gs = GenericSudokuSolver(grid=grid)
+    print GenericSudokuSolver.is_valid(grid, dim=3, rank=2)
     print gs.dim
     print gs.rank
     print gs.nnumbers
@@ -97,3 +140,6 @@ if __name__ == "__main__":
     gs.solve()
     print gs.solutions
     print gs.solutions_depth
+    print gs.grid_is_valid
+    print gs.grid_is_solvable
+    print gs.grid_is_solution_unique
