@@ -1,14 +1,19 @@
 import numpy as np
 
+from utils import timeout
+
+
+def count_nonzero_unique(arr):
+    unique, counts = np.unique(arr, return_counts=True)
+    return counts[unique.nonzero()]
+
 
 class SudokuSolver(object):
     """ Sudoku Solver
     """
-    
-    
+
     def __init__(self, grid):
         self.grid = np.array(grid)
-
 
     def possible(self, x, y, num):
         x0 = (x // 3) * 3
@@ -24,7 +29,6 @@ class SudokuSolver(object):
                     return False
         return True
 
-
     def possibilities(self, x, y):
         if self.grid[x, y] != 0:
             return []
@@ -36,12 +40,12 @@ class SudokuSolver(object):
         existing |= set(self.grid[x0:x0 + 3, y0:y0 + 3].flatten())
         possibilities = set(range(0, 10)) - existing
         return sorted(possibilities)
-    
-    
+
     def solve(self, method=0):
         """ Solve for all solutions for a given Sudoku grid
         """
         self.solutions = []
+        self.solutions_depth = []
         if method == 0:
             self._solve()
         elif method == 1:
@@ -49,7 +53,6 @@ class SudokuSolver(object):
         else:
             raise ValueError("Invalid method number, expected to be either 0 or 1.")
 
-    
     def _solve_alt(self):
         for i in range(9):
             for j in range(9):
@@ -62,36 +65,123 @@ class SudokuSolver(object):
                     return
         self.solutions.append(self.grid.copy())
 
-
-    def _solve(self):
-        for i, j in zip(*self.grid.nonzero()):
-            if self.grid[i, j] == 0:
-                for n in self.possibilities(i, j):
-                    self.grid[i, j] = n
-                    self._solve()
-                    self.grid[i, j] = 0
-                return
+    def _solve(self, depth=0):
+        for i, j in zip(*(self.grid == 0).nonzero()):
+            for n in self.possibilities(i, j):
+                depth += 1
+                self.grid[i, j] = n
+                self._solve(depth=depth)
+                self.grid[i, j] = 0
+            return
         self.solutions.append(self.grid.copy())
-
+        self.solutions_depth.append(depth)
 
     def solven(self, nsolutions=None):
         """ Solve for up to the first N solutions of a given Sudoku grid.
         """
         self.solutions = []
+        self.solutions_depth = []
         if nsolutions is not None:
-          self._nsolutions = nsolutions
-        self._solven()
+            self._nsolutions = nsolutions
+        self._solven(0)
 
-
-    def _solven(self):
+    def _solven(self, depth=0):
         if self._nsolutions is not None and len(self.solutions) >= self._nsolutions:
             return
-        for i in range(9):
-            for j in range(9):
-                if self.grid[i, j] == 0:
-                    for n in self.possibilities(i, j):
-                        self.grid[i, j] = n
-                        self._solven()
-                        self.grid[i, j] = 0
-                    return
+        for i, j in zip(*(self.grid == 0).nonzero()):
+            for n in self.possibilities(i, j):
+                depth += 1
+                self.grid[i, j] = n
+                self._solven(depth=depth)
+                self.grid[i, j] = 0
+            return
         self.solutions.append(self.grid.copy())
+        self.solutions_depth.append(depth)
+
+    def possibility_map(self):
+        return np.array([[len(self.possibilities(i, j)) for j in range(9)] for i in range(9)])
+
+    @staticmethod
+    def is_valid(grid):
+        grid = np.array(grid)
+        for i in range(9):
+            counts = count_nonzero_unique(grid[i, :])
+            if (counts > 1).any():
+                return False
+            counts = count_nonzero_unique(grid[:, i])
+            if (counts > 1).any():
+                return False
+        for i in range(3):
+            for j in range(3):
+                counts = count_nonzero_unique(grid[i * 3:i * 3 + 3, j * 3:j * 3 + 3].flatten())
+                if (counts > 1).any():
+                    return False
+        return True
+
+    @property
+    def grid_is_valid(self):
+        return self.is_valid(self.grid)
+
+    @property
+    def grid_is_solvable(self):
+        if not self.grid_is_valid:
+          return False
+        is_solvable = False
+        with timeout(1):
+            self.solven(1)
+            is_solvable = True
+        return is_solvable
+
+    @property
+    def grid_is_solution_unique(self):
+        if not self.grid_is_valid:
+          return False
+        is_solvable = False
+        with timeout(1):
+            self.solven(2)
+            is_solvable = True
+        return len(self.solutions) == 1
+
+    @property
+    def neighbor_list(self):
+        if not hasattr(self, "_neighbor_list"):
+            self._neighbor_list = np.zeros((9, 9, 20, 2), int)
+            for x in range(9):
+                for y in range(9):
+                    x0 = (x // 3) * 3
+                    y0 = (y // 3) * 3
+                    index = 0
+                    for i in range(9):
+                        if i != y:
+                            self._neighbor_list[x, y, index, :] = (x, i)
+                            index += 1
+                        if i != x:
+                            self._neighbor_list[x, y, index, :] = (i, y)
+                            index += 1
+                    for i in range(3):
+                        for j in range(3):
+                            if (x0 + i != x) and (y0 + j != y):
+                                self._neighbor_list[x, y, index, :] = (x0 + i, y0 + j)
+                                index += 1
+        return self._neighbor_list
+
+    def copy(self):
+        return self.__class__(self.grid.copy())
+
+
+if __name__ == "__main__":
+    grid = np.array(
+        [[5, 3, 0, 0, 7, 0, 0, 0, 0],
+         [6, 0, 0, 1, 9, 5, 0, 0, 0],
+         [0, 9, 8, 0, 0, 0, 0, 6, 0],
+         [8, 0, 0, 0, 6, 0, 0, 0, 3],
+         [4, 0, 0, 8, 0, 3, 0, 0, 1],
+         [7, 0, 0, 0, 2, 0, 0, 0, 6],
+         [0, 6, 0, 0, 0, 0, 2, 8, 0],
+         [0, 0, 0, 4, 1, 9, 0, 0, 5],
+         [0, 0, 0, 0, 8, 0, 0, 7, 9]])
+    s = SudokuSolver(grid=grid)
+    s.solve()
+    print s.solutions
+    print s.solutions_depth
+    print s.neighbor_list
