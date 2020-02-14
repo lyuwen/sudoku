@@ -1,6 +1,7 @@
 import numpy as np
 
 from utils import timeout
+from constants import sudoku_neighbor_list
 
 
 def count_nonzero_unique(arr):
@@ -38,7 +39,7 @@ class SudokuSolver(object):
         existing |= set(self.grid[x, :])
         existing |= set(self.grid[:, y])
         existing |= set(self.grid[x0:x0 + 3, y0:y0 + 3].flatten())
-        possibilities = set(range(0, 10)) - existing
+        possibilities = set(range(1, 10)) - existing
         return sorted(possibilities)
 
     def solve(self, method=0):
@@ -81,8 +82,7 @@ class SudokuSolver(object):
         """
         self.solutions = []
         self.solutions_depth = []
-        if nsolutions is not None:
-            self._nsolutions = nsolutions
+        self._nsolutions = nsolutions
         self._solven(0)
 
     def _solven(self, depth=0):
@@ -144,26 +144,7 @@ class SudokuSolver(object):
 
     @property
     def neighbor_list(self):
-        if not hasattr(self, "_neighbor_list"):
-            self._neighbor_list = np.zeros((9, 9, 20, 2), int)
-            for x in range(9):
-                for y in range(9):
-                    x0 = (x // 3) * 3
-                    y0 = (y // 3) * 3
-                    index = 0
-                    for i in range(9):
-                        if i != y:
-                            self._neighbor_list[x, y, index, :] = (x, i)
-                            index += 1
-                        if i != x:
-                            self._neighbor_list[x, y, index, :] = (i, y)
-                            index += 1
-                    for i in range(3):
-                        for j in range(3):
-                            if (x0 + i != x) and (y0 + j != y):
-                                self._neighbor_list[x, y, index, :] = (x0 + i, y0 + j)
-                                index += 1
-        return self._neighbor_list
+        return sudoku_neighbor_list
 
     def copy(self):
         return self.__class__(self.grid.copy())
@@ -182,6 +163,7 @@ if __name__ == "__main__":
          [0, 0, 0, 0, 8, 0, 0, 7, 9]])
     s = SudokuSolver(grid=grid)
     s.solve()
+    print s.possibility_map()
     print s.solutions
     print s.solutions_depth
-    print s.neighbor_list
+    #  print s.neighbor_list.shape
