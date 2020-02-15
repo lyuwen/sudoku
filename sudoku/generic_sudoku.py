@@ -26,7 +26,6 @@ class GenericSudoku(GenericSudokuSolver):
                 rand_num = np.random.randint(1, self.nnumbers + 1)
                 self.grid[rand_index] = rand_num
                 if (self.grid_is_valid and self.grid_is_solvable):
-                    is_solvable = True
                     valid_steps += 1
                 else:
                     self.grid[rand_index] = 0
