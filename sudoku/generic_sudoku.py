@@ -15,14 +15,16 @@ class GenericSudoku(GenericSudokuSolver):
         self.grid = np.zeros((self.nnumbers, ) * self.rank, int)
         valid_steps = 0
         while valid_steps < nrandomsteps:
-            oldgrid = self.grid.copy()
-            self.grid[tuple(np.random.randint(self.nnumbers, size=(self.rank, )))] = np.random.randint(1, self.nnumbers + 1)
-            is_solvable = False
-            if self.grid_is_valid and self.grid_is_solvable:
+            rand_index = tuple(np.random.randint(0, self.nnumbers, size=(self.rank, )))
+            if self.grid[rand_index] != 0:
+              continue
+            rand_num = np.random.randint(1, self.nnumbers + 1)
+            self.grid[rand_index] = rand_num
+            if (self.grid_is_valid and self.grid_is_solvable):
                 is_solvable = True
                 valid_steps += 1
-            if not is_solvable:
-                self.grid = oldgrid
+            else:
+                self.grid[rand_index] = 0
         self.solve(1)
         self.seed_grid = self.grid.copy()
         self.grid = self.solutions[0]

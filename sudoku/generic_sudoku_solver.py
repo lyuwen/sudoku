@@ -104,7 +104,7 @@ class GenericSudokuSolver(object):
         is_solvable = False
         with timeout(1):
             self.solve(1)
-            is_solvable = True
+            is_solvable = len(self.solutions) == 1
         return is_solvable
 
     @property
