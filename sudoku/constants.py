@@ -67,17 +67,6 @@ def _get_normal_sudoku_neighbor_list():
     return neighbor_list
 
 
-def _check_sudoku_neighbor_list():
-    normal_sudoku_neighbor_list = _get_normal_sudoku_neighbor_list()
-    sudoku_neighbor_list = get_sudoku_neighbor_list(dim=3, rank=2)
-    assert np.array_equal(sudoku_neighbor_list, normal_sudoku_neighbor_list)
-
-
 sudoku_neighbor_list = get_sudoku_neighbor_list(dim=3, rank=2)
 
 
-if __name__ == "__main__":
-    _check_sudoku_neighbor_list()
-
-    nl = get_sudoku_neighbor_list(dim=2, rank=3)
-    print(nl[0, 0, 0])

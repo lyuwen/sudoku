@@ -118,28 +118,3 @@ class GenericSudokuSolver(object):
         return len(self.solutions) == 1
 
 
-if __name__ == "__main__":
-    grid = np.array(
-        [[5, 3, 0, 0, 7, 0, 0, 0, 0],
-         [6, 0, 0, 1, 9, 5, 0, 0, 0],
-         [0, 9, 8, 0, 0, 0, 0, 6, 0],
-         [8, 0, 0, 0, 6, 0, 0, 0, 3],
-         [4, 0, 0, 8, 0, 3, 0, 0, 1],
-         [7, 0, 0, 0, 2, 0, 0, 0, 6],
-         [0, 6, 0, 0, 0, 0, 2, 8, 0],
-         [0, 0, 0, 4, 1, 9, 0, 0, 5],
-         [0, 0, 0, 0, 8, 0, 0, 7, 9]])
-    gs = GenericSudokuSolver(grid=grid)
-    print(GenericSudokuSolver.is_valid(grid, dim=3, rank=2))
-    print(gs.dim)
-    print(gs.rank)
-    print(gs.nnumbers)
-    print(gs.grid)
-    print(gs.possibilities((4, 4)))
-    print(gs.possibility_map())
-    gs.solve()
-    print(gs.solutions)
-    print(gs.solutions_depth)
-    print(gs.grid_is_valid)
-    print(gs.grid_is_solvable)
-    print(gs.grid_is_solution_unique)
