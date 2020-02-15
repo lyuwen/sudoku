@@ -40,7 +40,7 @@ def test_solve_regular_sudoku():
 
 
 def test_generate_random_sudoku_d2r3():
-    nrandomsteps=5
+    nrandomsteps=3
     s = GenericSudoku(dim=2, rank=3)
     assert s.grid_is_valid
     assert s.grid_is_solvable
