@@ -7,3 +7,5 @@ build
 dist
 # The development enviroment
 devenv 
+.tox
+scripts
