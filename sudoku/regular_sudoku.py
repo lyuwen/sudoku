@@ -7,10 +7,10 @@ from sudoku.regular_sudoku_solver import RegularSudokuSolver
 class RegularSudoku(RegularSudokuSolver):
 
     def __init__(self):
-        super(Sudoku, self).__init__(np.zeros((9, 9), int))
+        super().__init__(np.zeros((9, 9), int))
         self.token = np.arange(10)
 
-    def random_grid(self, nrandomsteps):
+    def random_grid(self, nrandomsteps=5):
         self.grid = np.zeros((9, 9), int)
         valid_steps = 0
         while valid_steps <= nrandomsteps:
@@ -18,16 +18,14 @@ class RegularSudoku(RegularSudokuSolver):
             self.grid[np.random.randint(9), np.random.randint(
                 9)] = np.random.randint(1, 10)
             is_solvable = False
-            if self.is_valid(self.grid):
-                with timeout(1):
-                    self.solven(1)
-                    valid_steps += 1
-                    is_solvable = True
+            if self.is_valid(self.grid) and self.grid_is_solvable:
+                is_solvable = True
+                valid_steps += 1
             if not is_solvable:
                 self.grid = oldgrid
-                valid_steps = self.nrandomsteps
+                valid_steps = nrandomsteps
         self.solven(1)
-        self.random_seed = self.grid.copy()
+        self.seed_grid = self.grid.copy()
         self.grid = self.solutions[0]
         return self.grid
 
@@ -48,8 +46,8 @@ class RegularSudoku(RegularSudokuSolver):
         new = self.__class__()
         new.set_grid(self.grid.copy())
         new.token = self.token.copy()
-        if hasattr(self, "random_seed"):
-            new.random_seed = self.random_seed.copy()
+        if hasattr(self, "seed_grid"):
+            new.seed_grid = self.seed_grid.copy()
         return new
 
 
@@ -88,3 +86,8 @@ if __name__ == "__main__":
         sprime.grid[i, j] = 0
         print(i, j, sprime.grid_is_solvable, sprime.grid_is_solution_unique, sprime.possibility_map()[4, 4] > 1, sprime.solutions_depth)
 
+    s = RegularSudoku()
+    s.random_grid()
+    print(s.grid)
+    print(s.seed_grid)
+    print(s.grid_is_solvable)
