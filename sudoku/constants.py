@@ -38,7 +38,8 @@ def get_sudoku_neighbor_list(dim=3, rank=2):
             if np.count_nonzero(tmpindex != index) > 1:
                 neighbor_list[tindex + (nindex, slice(None))] = tmpindex
                 nindex += 1
-        sortedorder = np.argsort(np.ravel_multi_index(neighbor_list[tindex].T, shape))
+        sortedorder = np.argsort(np.ravel_multi_index(
+            neighbor_list[tindex].T, shape))
         neighbor_list[tindex] = neighbor_list[tindex][sortedorder]
     return neighbor_list
 
@@ -62,11 +63,10 @@ def _get_normal_sudoku_neighbor_list():
                     if (x0 + i != x) and (y0 + j != y):
                         neighbor_list[x, y, index, :] = (x0 + i, y0 + j)
                         index += 1
-            sortedorder = np.argsort(np.ravel_multi_index(neighbor_list[x, y].T, (9, 9)))
+            sortedorder = np.argsort(
+                np.ravel_multi_index(neighbor_list[x, y].T, (9, 9)))
             neighbor_list[x, y] = neighbor_list[x, y][sortedorder]
     return neighbor_list
 
 
 sudoku_neighbor_list = get_sudoku_neighbor_list(dim=3, rank=2)
-
-

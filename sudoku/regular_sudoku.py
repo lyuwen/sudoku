@@ -36,7 +36,8 @@ class RegularSudoku(RegularSudokuSolver):
     def set_grid(self, grid):
         grid = np.array(grid)
         if not self.is_valid(grid):
-            raise ValueError("Input grid does not satisfy the basic rules of Sudoku.")
+            raise ValueError(
+                "Input grid does not satisfy the basic rules of Sudoku.")
         self.grid = grid
 
     def copy(self):
@@ -46,5 +47,3 @@ class RegularSudoku(RegularSudokuSolver):
         if hasattr(self, "seed_grid"):
             new.seed_grid = self.seed_grid.copy()
         return new
-
-

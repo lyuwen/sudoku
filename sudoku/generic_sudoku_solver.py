@@ -82,16 +82,17 @@ class GenericSudokuSolver(object):
         nnumbers = dim ** rank
         grid = np.array(grid)
         for j in range(rank):
-          for i in np.ndindex((nnumbers, ) * (rank - 1)):
-            slices = i[:j] + (slice(None), ) + i[j:]
-            counts = count_nonzero_unique(grid[slices])
+            for i in np.ndindex((nnumbers, ) * (rank - 1)):
+                slices = i[:j] + (slice(None), ) + i[j:]
+                counts = count_nonzero_unique(grid[slices])
+                if (counts > 1).any():
+                    return False
+        for major_index in np.ndindex((dim, ) * rank):
+            slices = tuple([slice(i * dim, i * dim + dim)
+                            for i in major_index])
+            counts = count_nonzero_unique(grid[slices].flatten())
             if (counts > 1).any():
                 return False
-        for major_index in np.ndindex((dim, ) * rank):
-          slices = tuple([slice(i * dim, i * dim + dim) for i in major_index])
-          counts = count_nonzero_unique(grid[slices].flatten())
-          if (counts > 1).any():
-              return False
         return True
 
     @property
@@ -101,7 +102,7 @@ class GenericSudokuSolver(object):
     @property
     def grid_is_solvable(self):
         if not self.grid_is_valid:
-          return False
+            return False
         original_grid = self.grid.copy()
         with timeout(self.timeout):
             self.solve(1)
@@ -111,11 +112,9 @@ class GenericSudokuSolver(object):
     @property
     def grid_is_solution_unique(self):
         if not self.grid_is_valid:
-          return False
+            return False
         original_grid = self.grid.copy()
         with timeout(self.timeout):
             self.solve(2)
         self.grid = original_grid
         return len(self.solutions) == 1
-
-

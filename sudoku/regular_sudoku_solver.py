@@ -52,7 +52,8 @@ class RegularSudokuSolver(object):
         elif method == 1:
             self._solve_alt()
         else:
-            raise ValueError("Invalid method number, expected to be either 0 or 1.")
+            raise ValueError(
+                "Invalid method number, expected to be either 0 or 1.")
 
     def _solve_alt(self):
         for i in range(9):
@@ -113,7 +114,8 @@ class RegularSudokuSolver(object):
                 return False
         for i in range(3):
             for j in range(3):
-                counts = count_nonzero_unique(grid[i * 3:i * 3 + 3, j * 3:j * 3 + 3].flatten())
+                counts = count_nonzero_unique(
+                    grid[i * 3:i * 3 + 3, j * 3:j * 3 + 3].flatten())
                 if (counts > 1).any():
                     return False
         return True
@@ -125,7 +127,7 @@ class RegularSudokuSolver(object):
     @property
     def grid_is_solvable(self):
         if not self.grid_is_valid:
-          return False
+            return False
         original_grid = self.grid.copy()
         with timeout(1):
             self.solven(1)
@@ -135,7 +137,7 @@ class RegularSudokuSolver(object):
     @property
     def grid_is_solution_unique(self):
         if not self.grid_is_valid:
-          return False
+            return False
         original_grid = self.grid.copy()
         with timeout(1):
             self.solven(2)
@@ -148,5 +150,3 @@ class RegularSudokuSolver(object):
 
     def copy(self):
         return self.__class__(self.grid.copy())
-
-
