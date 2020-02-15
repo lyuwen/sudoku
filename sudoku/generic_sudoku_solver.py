@@ -1,8 +1,8 @@
 from __future__ import print_function
 import numpy as np
 
-from utils import timeout, count_nonzero_unique
-from constants import get_sudoku_neighbor_list
+from sudoku.utils import timeout, count_nonzero_unique
+from sudoku.constants import get_sudoku_neighbor_list
 
 
 class GenericSudokuSolver(object):

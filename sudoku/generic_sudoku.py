@@ -1,7 +1,7 @@
 from __future__ import print_function
 import numpy as np
 
-from generic_sudoku_solver import GenericSudokuSolver
+from sudoku.generic_sudoku_solver import GenericSudokuSolver
 
 
 class GenericSudoku(GenericSudokuSolver):

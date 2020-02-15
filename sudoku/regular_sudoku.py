@@ -1,10 +1,10 @@
 from __future__ import print_function
 import numpy as np
 
-from sudoku_solver import SudokuSolver
+from sudoku.regular_sudoku_solver import RegularSudokuSolver
 
 
-class Sudoku(SudokuSolver):
+class RegularSudoku(RegularSudokuSolver):
 
     def __init__(self):
         super(Sudoku, self).__init__(np.zeros((9, 9), int))
@@ -64,7 +64,7 @@ if __name__ == "__main__":
          [0, 6, 0, 0, 0, 0, 2, 8, 0],
          [0, 0, 0, 4, 1, 9, 0, 0, 5],
          [0, 0, 0, 0, 8, 0, 0, 7, 9]])
-    s = Sudoku()
+    s = RegularSudoku()
     s.set_grid(grid)
     s.solve()
     print(s.possibility_map())

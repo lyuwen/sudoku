@@ -5,3 +5,5 @@
 build
 *.egg-info
 dist
+# The development enviroment
+devenv 

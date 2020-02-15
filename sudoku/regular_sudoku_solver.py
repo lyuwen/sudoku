@@ -1,11 +1,11 @@
 from __future__ import print_function
 import numpy as np
 
-from utils import timeout, count_nonzero_unique
-from constants import sudoku_neighbor_list
+from sudoku.utils import timeout, count_nonzero_unique
+from sudoku.constants import sudoku_neighbor_list
 
 
-class SudokuSolver(object):
+class RegularSudokuSolver(object):
     """ Sudoku Solver
     """
 
@@ -161,7 +161,7 @@ if __name__ == "__main__":
          [0, 6, 0, 0, 0, 0, 2, 8, 0],
          [0, 0, 0, 4, 1, 9, 0, 0, 5],
          [0, 0, 0, 0, 8, 0, 0, 7, 9]])
-    s = SudokuSolver(grid=grid)
+    s = RegularSudokuSolver(grid=grid)
     s.solve()
     print(s.possibility_map())
     print(s.solutions)
