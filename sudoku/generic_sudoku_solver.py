@@ -81,14 +81,13 @@ class GenericSudokuSolver(object):
         nnumbers = dim ** rank
         grid = np.array(grid)
         for j in range(rank):
-          for i in range(nnumbers):
-            slices = tuple([slice(None)] * j + [i] +
-                           [slice(None)] * (rank - j - 1))
+          for i in np.ndindex((nnumbers, ) * (rank - 1)):
+            slices = i[:j] + (slice(None), ) + i[j:]
             counts = count_nonzero_unique(grid[slices])
             if (counts > 1).any():
                 return False
         for major_index in np.ndindex((dim, ) * rank):
-          slices = tuple([slice(i * 3, i * 3 + 3) for i in major_index])
+          slices = tuple([slice(i * dim, i * dim + dim) for i in major_index])
           counts = count_nonzero_unique(grid[slices].flatten())
           if (counts > 1).any():
               return False

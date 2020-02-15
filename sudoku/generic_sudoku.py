@@ -8,26 +8,24 @@ class GenericSudoku(GenericSudokuSolver):
 
     def __init__(self, dim, rank):
         shape = (dim**rank, ) * rank
-        super(GenericSudoku, self).__init__(np.zeros(shape, int))
+        super().__init__(np.zeros(shape, int))
         self.token = np.arange(self.nnumbers + 1)
 
-    def random_grid(self, nrandomsteps):
+    def random_grid(self, nrandomsteps=5):
         self.grid = np.zeros((self.nnumbers, ) * self.rank, int)
         valid_steps = 0
         while valid_steps <= nrandomsteps:
             oldgrid = self.grid.copy()
-            self.grid[np.random.randint(self.nnumbers, size=(self.rank, ))] = np.random.randint(1, self.nnumbers + 1)
+            self.grid[tuple(np.random.randint(self.nnumbers, size=(self.rank, )))] = np.random.randint(1, self.nnumbers + 1)
             is_solvable = False
-            if self.is_valid(self.grid):
-                with timeout(1):
-                    self.solve(1)
-                    valid_steps += 1
-                    is_solvable = True
+            if self.grid_is_valid and self.grid_is_solvable:
+                is_solvable = True
+                valid_steps += 1
             if not is_solvable:
                 self.grid = oldgrid
-                valid_steps = self.nrandomsteps
+                valid_steps = nrandomsteps
         self.solve(1)
-        self.random_seed = self.grid.copy()
+        self.seed_grid = self.grid.copy()
         self.grid = self.solutions[0]
         return self.grid
 
@@ -64,15 +62,15 @@ if __name__ == "__main__":
          [0, 6, 0, 0, 0, 0, 2, 8, 0],
          [0, 0, 0, 4, 1, 9, 0, 0, 5],
          [0, 0, 0, 0, 8, 0, 0, 7, 9]])
-    s = GenericSudoku(dim=3, rank=2)
-    s.set_grid(grid)
-    s.solve()
-    print(s.possibility_map())
-    print(s.solutions)
-    print(s.solutions_depth)
-    print(s.grid_is_valid)
-    print(s.grid_is_solvable)
-    print(s.grid_is_solution_unique)
+    #  s = GenericSudoku(dim=3, rank=2)
+    #  s.set_grid(grid)
+    #  s.solve()
+    #  print(s.possibility_map())
+    #  print(s.solutions)
+    #  print(s.solutions_depth)
+    #  print(s.grid_is_valid)
+    #  print(s.grid_is_solvable)
+    #  print(s.grid_is_solution_unique)
 
     #  nonzero_x, nonzero_y = s.grid.nonzero()
     #  print("nonzero_x", nonzero_x)
@@ -88,3 +86,26 @@ if __name__ == "__main__":
     #      sprime.grid[i, j] = 0
     #      print(i, j, sprime.grid_is_solvable, sprime.grid_is_solution_unique, sprime.possibility_map()[4, 4] > 1, sprime.solutions_depth)
     #
+
+    s = GenericSudoku(dim=3, rank=2)
+    #  s = GenericSudoku(dim=2, rank=2)
+    #  s = GenericSudoku(dim=2, rank=3)
+    #  raise SystemExit
+    #  print(s.grid_is_valid)
+    #  print(s.grid_is_solvable)
+    #  print(s.grid_is_solution_unique)
+    s.random_grid(nrandomsteps=-1)
+    #  print(s.grid)
+    #  s.solve(1)
+    #  print(self.nnumbers)
+    print(s.grid.shape)
+    #  print(s.grid)
+    print(np.count_nonzero(s.grid))
+    print(s.grid_is_valid)
+    print(s.grid_is_solvable)
+    s.solve(1)
+    print(len(s.solutions))
+    #  print(s.grid[:2, :2, :2])
+    #  print(s.grid[:, 1, 0])
+    #  print(s.neighbor_list[0, 0, 0])
+    #  print(s.seed_grid)
