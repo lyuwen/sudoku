@@ -102,23 +102,19 @@ class GenericSudokuSolver(object):
     def grid_is_solvable(self):
         if not self.grid_is_valid:
           return False
-        is_solvable = False
         original_grid = self.grid.copy()
         with timeout(self.timeout):
             self.solve(1)
-            is_solvable = len(self.solutions) == 1
         self.grid = original_grid
-        return is_solvable
+        return len(self.solutions) == 1
 
     @property
     def grid_is_solution_unique(self):
         if not self.grid_is_valid:
           return False
-        is_solvable = False
         original_grid = self.grid.copy()
         with timeout(self.timeout):
             self.solve(2)
-            is_solvable = True
         self.grid = original_grid
         return len(self.solutions) == 1
 

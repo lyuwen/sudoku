@@ -126,20 +126,20 @@ class RegularSudokuSolver(object):
     def grid_is_solvable(self):
         if not self.grid_is_valid:
           return False
-        is_solvable = False
+        original_grid = self.grid.copy()
         with timeout(1):
             self.solven(1)
-            is_solvable = True
-        return is_solvable
+        self.grid = original_grid
+        return len(self.solutions) == 1
 
     @property
     def grid_is_solution_unique(self):
         if not self.grid_is_valid:
           return False
-        is_solvable = False
+        original_grid = self.grid.copy()
         with timeout(1):
             self.solven(2)
-            is_solvable = True
+        self.grid = original_grid
         return len(self.solutions) == 1
 
     @property

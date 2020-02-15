@@ -17,11 +17,9 @@ class RegularSudoku(RegularSudokuSolver):
             oldgrid = self.grid.copy()
             self.grid[np.random.randint(9), np.random.randint(
                 9)] = np.random.randint(1, 10)
-            is_solvable = False
-            if self.is_valid(self.grid) and self.grid_is_solvable:
-                is_solvable = True
+            if (self.is_valid(self.grid) and self.grid_is_solvable):
                 valid_steps += 1
-            if not is_solvable:
+            else:
                 self.grid = oldgrid
         self.solven(1)
         self.seed_grid = self.grid.copy()
