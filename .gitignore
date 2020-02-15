@@ -2,3 +2,6 @@
 .ipynb_checkpoints
 *.pyc
 .*.swp
+build
+*.egg-info
+dist
