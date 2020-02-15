@@ -7,8 +7,9 @@ from sudoku.constants import get_sudoku_neighbor_list
 
 class GenericSudokuSolver(object):
 
-    def __init__(self, grid, dim=None, rank=None):
+    def __init__(self, grid, dim=None, rank=None, timeout=1):
         self.grid = np.array(grid)
+        self.timeout = timeout
         if ((dim is not None) and (rank is not None)):
             # check dimension
             if ((len(self.grid.shape) != rank)
@@ -102,9 +103,11 @@ class GenericSudokuSolver(object):
         if not self.grid_is_valid:
           return False
         is_solvable = False
-        with timeout(1):
+        original_grid = self.grid.copy()
+        with timeout(self.timeout):
             self.solve(1)
             is_solvable = len(self.solutions) == 1
+        self.grid = original_grid
         return is_solvable
 
     @property
@@ -112,9 +115,11 @@ class GenericSudokuSolver(object):
         if not self.grid_is_valid:
           return False
         is_solvable = False
-        with timeout(1):
+        original_grid = self.grid.copy()
+        with timeout(self.timeout):
             self.solve(2)
             is_solvable = True
+        self.grid = original_grid
         return len(self.solutions) == 1
 
 

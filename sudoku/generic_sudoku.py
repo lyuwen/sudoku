@@ -6,9 +6,14 @@ from sudoku.generic_sudoku_solver import GenericSudokuSolver
 
 class GenericSudoku(GenericSudokuSolver):
 
-    def __init__(self, dim, rank):
+    def __init__(self, dim, rank, timeout=1):
         shape = (dim**rank, ) * rank
-        super().__init__(np.zeros(shape, int))
+        super().__init__(
+            grid=np.zeros(shape, int), 
+            dim=dim,
+            rank=rank,
+            timeout=timeout
+            )
         self.token = np.arange(self.nnumbers + 1)
 
     def random_grid(self, nrandomsteps=5):
@@ -16,15 +21,14 @@ class GenericSudoku(GenericSudokuSolver):
         valid_steps = 0
         while valid_steps < nrandomsteps:
             rand_index = tuple(np.random.randint(0, self.nnumbers, size=(self.rank, )))
-            if self.grid[rand_index] != 0:
-              continue
-            rand_num = np.random.randint(1, self.nnumbers + 1)
-            self.grid[rand_index] = rand_num
-            if (self.grid_is_valid and self.grid_is_solvable):
-                is_solvable = True
-                valid_steps += 1
-            else:
-                self.grid[rand_index] = 0
+            if self.grid[rand_index] == 0:
+              rand_num = np.random.randint(1, self.nnumbers + 1)
+              self.grid[rand_index] = rand_num
+              if (self.grid_is_valid and self.grid_is_solvable):
+                  is_solvable = True
+                  valid_steps += 1
+              else:
+                  self.grid[rand_index] = 0
         self.solve(1)
         self.seed_grid = self.grid.copy()
         self.grid = self.solutions[0]
