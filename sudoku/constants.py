@@ -14,7 +14,7 @@ def get_sudoku_neighbor_list(dim=3, rank=2):
     3x3.
     """
     nnumbers = dim ** rank
-    nneighbors = rank * (nnumbers - 1) + (dim - 1) ** rank
+    nneighbors = rank * (nnumbers - 1) + (nnumbers - 1 - (dim - 1) * rank)
     shape = (nnumbers, ) * rank
     subshape = (dim, ) * rank
     #
@@ -35,7 +35,7 @@ def get_sudoku_neighbor_list(dim=3, rank=2):
 
         for sub_index in np.ndindex(*subshape):
             tmpindex = np.array(major_index) + np.array(sub_index)
-            if not (tmpindex == index).any():
+            if np.count_nonzero(tmpindex != index) > 1:
                 neighbor_list[tindex + (nindex, slice(None))] = tmpindex
                 nindex += 1
         sortedorder = np.argsort(np.ravel_multi_index(neighbor_list[tindex].T, shape))
